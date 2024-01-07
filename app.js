@@ -29,7 +29,7 @@ app.get("/campgrounds/new", (req, res) => {
     res.render("campgrounds/new");
 });
 
-// new - route fro post request
+// new - route for post request
 app.post("/campgrounds/", async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -44,7 +44,7 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
 });
 
 
-// edit - route fro post request
+// edit - route for post request
 app.put("/campgrounds/:id", async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground });
         
@@ -52,11 +52,14 @@ app.put("/campgrounds/:id", async (req, res) => {
 
 });
 
+// show
 app.get("/campgrounds/:id", async (req, res) => {
     const campground = await Campground.findById(req.params.id)
     res.render("campgrounds/show", { campground });
+    // console.log("SHOW - id = " + JSON.stringify(campground));
 });
 
+// delete
 app.delete("/campgrounds/:id", async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
     res.redirect("/campgrounds");
