@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 
 const Campground = require("./models/campground");
+const catchAsync = require("./utils/catchAsync");
 
 
 app.set("view engine", "ejs");
@@ -30,40 +31,44 @@ app.get("/campgrounds/new", (req, res) => {
 });
 
 // new - route for post request
-app.post("/campgrounds/", async (req, res) => {
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-
-});
+app.post("/campgrounds/", catchAsync(async (req, res, next) => {
+        const campground = new Campground(req.body.campground);
+        await campground.save();
+        res.redirect(`/campgrounds/${campground._id}`);
+}));
 
 // edit - route serving the edit form
-app.get("/campgrounds/:id/edit", async (req, res) => {
+app.get("/campgrounds/:id/edit", catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit', { campground });
-});
+}));
 
 
 // edit - route for post request
-app.put("/campgrounds/:id", async (req, res) => {
+app.put("/campgrounds/:id", catchAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground });
         
     res.redirect(`/campgrounds/${campground._id}`);
 
-});
+}));
 
 // show
-app.get("/campgrounds/:id", async (req, res) => {
+app.get("/campgrounds/:id", catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
     res.render("campgrounds/show", { campground });
     // console.log("SHOW - id = " + JSON.stringify(campground));
-});
+}));
 
 // delete
-app.delete("/campgrounds/:id", async (req, res) => {
+app.delete("/campgrounds/:id", catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
     res.redirect("/campgrounds");
 
+}));
+
+// error handler
+app.use((err, req, res, next) => {
+    res.send("Something went wrong!");
 })
 
 
