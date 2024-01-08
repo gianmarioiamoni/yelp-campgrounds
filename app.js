@@ -8,6 +8,20 @@ const ejsMate = require("ejs-mate");
 const Campground = require("./models/campground");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
+const { campgroundSchema } = require("./schemas");
+
+// middleware validation function
+const validateCampground = (req, res, next) => {
+    
+    const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+        // get a single string error message
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
 
 
 app.set("view engine", "ejs");
@@ -32,10 +46,12 @@ app.get("/campgrounds/new", (req, res) => {
 });
 
 // new - route for post request
-app.post("/campgrounds/", catchAsync(async (req, res, next) => {
-    if (!req.body.campground)
-        throw new ExpressError("invalid Campground Data", 400);
+app.post("/campgrounds/", validateCampground, catchAsync(async (req, res, next) => {
+    // if (!req.body.campground)
+    //     throw new ExpressError("invalid Campground Data", 400);
     
+    
+    // create a new Campground object and save It to MongoDB
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -49,7 +65,7 @@ app.get("/campgrounds/:id/edit", catchAsync(async (req, res) => {
 
 
 // edit - route for post request
-app.put("/campgrounds/:id", catchAsync(async (req, res) => {
+app.put("/campgrounds/:id", validateCampground, catchAsync(async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id, { ...req.body.campground });
         
     res.redirect(`/campgrounds/${campground._id}`);
