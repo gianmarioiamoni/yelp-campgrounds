@@ -9,12 +9,25 @@ const Campground = require("./models/campground");
 const Review = require("./models/review");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
-const { campgroundSchema } = require("./schemas");
+const { campgroundSchema, reviewSchema } = require("./schemas");
 
 // middleware validation function
 const validateCampground = (req, res, next) => {
     
     const { error } = campgroundSchema.validate(req.body);
+    if (error) {
+        // get a single string error message
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
+
+// middleware validation function
+const validateReview = (req, res, next) => {
+
+    const { error } = reviewSchema.validate(req.body);
     if (error) {
         // get a single string error message
         const msg = error.details.map(el => el.message).join(',');
@@ -86,7 +99,7 @@ app.delete("/campgrounds/:id", catchAsync(async (req, res) => {
 
 // REVIEWS
 
-app.post("/campgrounds/:id/reviews", catchAsync(async (req, res) => {
+app.post("/campgrounds/:id/reviews", validateReview, catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
     campground.reviews.push(review);
