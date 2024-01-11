@@ -4,11 +4,28 @@ const path = require("path");
 const mongoose = require('mongoose');
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
 
 const ExpressError = require("./utils/ExpressError");
 
 const campgrounds = require("./routes/campground");
 const reviews = require("./routes/reviews");
+
+// session config
+const sessionConfig = {
+    secret: "thisshouldbeabettersecret!",
+    resave: false,
+    saveUnitialized: true,
+    cookie: {
+        // security
+        httpOnly: true,
+        // setup expiring date in a week for coockie
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7 
+    }
+};
+
+app.use(session(sessionConfig));
 
 
 app.set("view engine", "ejs");
