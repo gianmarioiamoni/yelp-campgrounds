@@ -5,11 +5,14 @@ const mongoose = require('mongoose');
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const flash = require("connect-flash");
 
 const ExpressError = require("./utils/ExpressError");
 
 const campgrounds = require("./routes/campground");
 const reviews = require("./routes/reviews");
+
+
 
 // session config
 const sessionConfig = {
@@ -26,7 +29,14 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
+app.use(flash());
 
+// middleware for flashes
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
