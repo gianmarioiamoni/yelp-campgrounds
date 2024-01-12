@@ -9,16 +9,22 @@ const flash = require("connect-flash");
 
 const ExpressError = require("./utils/ExpressError");
 
-const campgrounds = require("./routes/campground");
-const reviews = require("./routes/reviews");
+const campgroundRoute = require("./routes/campground");
+const reviewRoute = require("./routes/reviews");
+const userRoute = require("./routes/user")
 
+// authentication with Passport
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+const User = require("./models/user");
 
 
 // session config
 const sessionConfig = {
     secret: "thisshouldbeabettersecret!",
     resave: false,
-    saveUnitialized: true,
+    saveUninitialized: true,
     cookie: {
         // security
         httpOnly: true,
@@ -30,6 +36,16 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());
+
+// Passport initialization; session should be initialized before
+app.use(passport.initialize());
+app.use(passport.session());
+// specify the authentication method - defined in User model, added authomatically
+passport.use(new LocalStrategy(User.authenticate()));
+// specify how we store a user in the session and how we remove It from the session
+// methods added by password-local-mongoose
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // middleware for flashes
 app.use((req, res, next) => {
@@ -46,8 +62,9 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 app.engine("ejs", ejsMate);
 
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
+app.use("/campgrounds", campgroundRoute);
+app.use("/campgrounds/:id/reviews", reviewRoute);
+app.use("/", userRoute);
 
 app.get("/", (req, res) => {
     res.render("home");
