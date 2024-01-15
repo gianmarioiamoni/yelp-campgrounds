@@ -30,7 +30,7 @@ const sessionConfig = {
         httpOnly: true,
         // setup expiring date in a week for coockie
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7 
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 };
 
@@ -82,7 +82,7 @@ app.use((err, req, res, next) => {
     if (!err.message)
         err.message = "Something went wrong";
 
-    res.status(statusCode).render("error", {err});
+    res.status(statusCode).render("error", { err });
 })
 
 
