@@ -47,8 +47,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// middleware for flashes
+// middleware for flashes and for user information
 app.use((req, res, next) => {
+    // req.user is provided by Passport and contains information about the current user:
+    // id, username, email or undefined if the user is not logged in
+    // Now in all templates I have access to currentUser
+    // used in NavBar to disable login/register or logout buttons
+    res.locals.currentUser = req.user;
+
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();

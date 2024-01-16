@@ -20,7 +20,7 @@ const validateCampground = (req, res, next) => {
     }
 }
 
-router.get("/", isLoggedIn, async (req, res) => {
+router.get("/", async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render("campgrounds/index", { campgrounds });
 });
