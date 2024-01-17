@@ -22,6 +22,9 @@
                 <li class="list-group-item">$<%=campground.price%> / night</li>
             </ul>
 
+            <!-- edit and delete buttons. 
+                 Visible only if there is a user logged-in and this is the creator of the campground 
+            -->
             <% if ( currentUser && campground.author.equals(currentUser._id) ) { %>
                 <div class="card-body">
                     <a href="/campgrounds/<%=campground._id%>/edit" class="card-link btn btn-info">Edit</a>
@@ -39,33 +42,48 @@
 
     </div>
     <div class="col-6">
-        <h5>Leave a review</h5>
-        <form class="mb-3 validated-form" action="/campgrounds/<%=campground._id%>/reviews" method="POST" novalidate>
-            <div class="mb-3">
-                <label for="rating" class="form-label">Rating</label>
-                <input class="form-range" min="1" max="5" type="range" name="review[rating]" id="rating">
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="body">Review</label>
-                <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
-                <div class="valid-feedback">
-                    Looks good!
+
+        <!-- add a review form. 
+             Visible only if there is a logged-in user 
+        -->
+        <% if (currentUser) { %>
+            <h5>Leave a review</h5>
+            <form class="mb-3 validated-form" action="/campgrounds/<%=campground._id%>/reviews" method="POST" novalidate>
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input class="form-range" min="1" max="5" type="range" name="review[rating]" id="rating">
                 </div>
-            </div>
-            <button class="btn btn-success">Submit</button>
-        </form>
+                <div class="mb-3">
+                    <label class="form-label" for="body">Review</label>
+                    <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <button class="btn btn-success">Submit</button>
+            </form>
+        <% } %>
+        
+        <!-- show reviews list -->
         <% for (let review of campground.reviews) { %>
             <div class="card mb-3">
                 <div class="card-body">
                     <h5>
-                        <div class="card-title">Rating: <%= review.rating %>
+                        <div class="card-title">
+                            Rating: <%= review.rating %>
                         </div>
                     </h5>
-                    <p class="card-text"> Review: <%= review.body %>
-                    </p>
-                    <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
-                        <button class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                    <h6 class="card-subtitle mb-2 text-body-tertiary">By <%= review.author.username %></h6>
+                    <p class="card-text"> Review: <%= review.body %></p>
+
+                    <!-- review delete button 
+                         Visible only an user is logged-in and this is the author of the review 
+                    -->
+                    <% if ( currentUser && review.author.equals(currentUser._id) ) { %>
+                        <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             </div>
         <% } %>

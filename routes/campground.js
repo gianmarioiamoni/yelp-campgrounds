@@ -59,7 +59,15 @@ router.put("/:id", isLoggedIn, isAuthor, validateCampground, catchAsync(async (r
 // show
 router.get("/:id", catchAsync(async (req, res) => {
     // find the campground to show and populate its reviews field
-    const campground = await Campground.findById(req.params.id).populate("reviews").populate("author");
+    const campground = await Campground.findById(req.params.id)
+        // populate each campground with its reviews and each review with its author 
+        .populate({
+            path: "reviews",
+            populate: {
+                path: "author"
+            }
+        })
+        .populate("author");
     if (!campground) {
         req.flash("error", "Cannot find the campground");
         return res.redirect("/campgrounds");

@@ -1,6 +1,9 @@
 const Campground = require("./models/campground");
+const Review = require("./models/review");
 const { campgroundSchema, reviewSchema } = require("./schemas");
 const ExpressError = require("./utils/ExpressError");
+
+// CAMPGROUND MIDDLEWARE
 
 // middleware to check if an user is authenticated
 module.exports.isLoggedIn = (req, res, next) => {
@@ -47,6 +50,9 @@ module.exports.isAuthor = async (req, res, next) => {
     next();
 };
 
+
+// REVIEWS MIDDLEWARE
+
 // middleware validation function for reviews
 module.exports.validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
@@ -59,3 +65,16 @@ module.exports.validateReview = (req, res, next) => {
         next();
     }
 }
+
+// middleware to check if the author of a review is the current user
+module.exports.isReviewAuthor = async (req, res, next) => {
+    // route is /campgrounds/:id/reviews/:reviewId 
+    const { id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+
+    if (!review.author.equals(req.user._id)) {
+        req.flash("error", "You don't have permission to do that");
+        return res.redirect(`/campgrounds/${id}`);
+    }
+    next();
+};
