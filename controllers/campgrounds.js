@@ -12,10 +12,13 @@ module.exports.renderNewForm = (req, res) => {
 module.exports.createCampground = async (req, res, next) => {
     // create a new Campground object 
     const campground = new Campground(req.body.campground);
-    // add the author as the current logged user; the id is stored in req.user
+    // req.files it's an array containing information about loaded files provided by Multer
+    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    // add the author as the current logged user; the id is stored in req.user, provided by Passport
     campground.author = req.user._id;
 
     await campground.save();
+    console.log(campground);
 
     req.flash("success", "Successfully made a new campground");
 

@@ -26,9 +26,22 @@ async function main() {
                     author: '65a170d04e30be43d3dbe968',
                     location: `${cities[random1000].city}, ${cities[random1000].state}`,
                     title: `${sample(descriptors)} ${sample(places)}`,
-                    image: 'https://source.unsplash.com/collection/483251',
                     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!',
-                    price
+                    price,
+                    images: [
+                        {
+                            url: 'https://res.cloudinary.com/dzmynvqbz/image/upload/v1705606263/YelpCamp/fomr7wnhmjsg0za9fc0e.jpg',
+                            filename: 'YelpCamp/fomr7wnhmjsg0za9fc0e'
+                        },
+                        {
+                            url: 'https://res.cloudinary.com/dzmynvqbz/image/upload/v1705606274/YelpCamp/ven8af5iqvmmac0vno9e.jpg',
+                            filename: 'YelpCamp/ven8af5iqvmmac0vno9e'
+                        },
+                        {
+                            url: 'https://res.cloudinary.com/dzmynvqbz/image/upload/v1705606275/YelpCamp/t4ewttlxtugv8ekvlyvo.jpg',
+                            filename: 'YelpCamp/t4ewttlxtugv8ekvlyvo'
+                        }
+                    ]
                 })
                 await camp.save();
             }

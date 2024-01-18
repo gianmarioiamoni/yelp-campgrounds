@@ -18,14 +18,9 @@ router.route("/")
     // index route
     .get(catchAsync(campgrounds.index))
     // create a new campground route
-    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
-    
     // upload middleware is for parsing multicode objects for image upload
     // "image" is the form name used to upload the image
-    .post(upload.array("image"), (req, res) => {
-        console.log(req.body, req.files);
-        res.send("IT WORKED!!");
-    })
+    .post(isLoggedIn, upload.array("image"), validateCampground, catchAsync(campgrounds.createCampground));
 
 // new - route serving the new form
 router.get("/new", isLoggedIn, campgrounds.renderNewForm);
