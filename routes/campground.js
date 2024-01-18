@@ -5,11 +5,27 @@ const campgrounds = require("../controllers/campgrounds");
 const catchAsync = require("../utils/catchAsync");
 const { isLoggedIn, isAuthor, validateCampground } = require("../middleware");
 
+// Cloudinary storage
+const { storage } = require("../cloudinary"); // index not needed, automatically looked for
+
+// to parse multicode for images upload
+const multer = require('multer');
+// const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage });
+
+
 router.route("/")
     // index route
     .get(catchAsync(campgrounds.index))
     // create a new campground route
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+    
+    // upload middleware is for parsing multicode objects for image upload
+    // "image" is the form name used to upload the image
+    .post(upload.array("image"), (req, res) => {
+        console.log(req.body, req.files);
+        res.send("IT WORKED!!");
+    })
 
 // new - route serving the new form
 router.get("/new", isLoggedIn, campgrounds.renderNewForm);
