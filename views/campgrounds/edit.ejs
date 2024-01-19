@@ -22,6 +22,20 @@
                     <label class="form-label" for="image">Add Images</label>
                     <input type="file" name="image" id="image" multiple>
                 </div>
+                <!-- shows images for deleting -->
+                <div class="mb-3">
+                    <% campground.images.forEach(function(image, i) {  %>
+                        <img src="<%= image.url %>" class="img-thumbnail" alt="campground image">
+                        <div class="form-check-inline">
+                            <!-- when a checkbox is checked, each value is added to deleteImages,  
+                                 which is an array when we parse the body, each element is an image  
+                                 In route we have access to deleteImages[] 
+                            -->
+                            <input type="checkbox" name="deleteImages[]" value="<%=image.filename%>" id="image-<%=i%>">
+                            <label for="image-<%=i%>">Delete</label>
+                        </div>
+                    <% }) %>
+                </div>
     
                 <div class="mb-3">
                     <label class="form-label" for="price">Price</label>

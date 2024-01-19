@@ -1,4 +1,5 @@
 const Campground = require("../models/campground");
+const { cloudinary } = require("../cloudinary");
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -63,6 +64,22 @@ module.exports.updateCampground = async (req, res) => {
     // req.files it's an array containing information about loaded files provided by Multer
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.images.push(...imgs);
+    // Delete images
+    // We have access to deleteImages[], containing the images to be deleted
+    if (req.body.deleteImages) {
+        // if there are images to be deleted
+        
+        // delete images from MongoDB
+        await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+
+        // delete images from Cloudinary
+        for (let image of req.body.deleteImages) {
+            // destroy() is a method provided by Cloudinary
+            await cloudinary.uploader.destroy(image);
+        }
+
+    }
+
     await campground.save();
 
     req.flash("success", "Successfully updated campground");
