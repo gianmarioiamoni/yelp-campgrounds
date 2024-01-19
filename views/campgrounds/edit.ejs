@@ -25,7 +25,8 @@
                 <!-- shows images for deleting -->
                 <div class="mb-3">
                     <% campground.images.forEach(function(image, i) {  %>
-                        <img src="<%= image.url %>" class="img-thumbnail" alt="campground image">
+                        <!-- thumbnail is provided by the virtual properties in the ImageModel -->
+                        <img src="<%= image.thumbnail %>" class="img-thumbnail" alt="campground image">
                         <div class="form-check-inline">
                             <!-- when a checkbox is checked, each value is added to deleteImages,  
                                  which is an array when we parse the body, each element is an image  
