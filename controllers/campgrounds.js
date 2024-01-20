@@ -1,6 +1,11 @@
 const Campground = require("../models/campground");
 const { cloudinary } = require("../cloudinary");
 
+// Mapbox SDK for geocoding
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render("campgrounds/index", { campgrounds });
@@ -11,8 +16,18 @@ module.exports.renderNewForm = (req, res) => {
 }
 
 module.exports.createCampground = async (req, res, next) => {
+    // forwarding geocoding provided by Mapbox
+    const geoData = await geocoder.forwardGeocode({
+        query: req.body.campground.location,
+        limit: 1
+    }).send();
+
     // create a new Campground object 
     const campground = new Campground(req.body.campground);
+    
+    // body.features[0].geometry.coordinates is an array [longitude, latitude]
+    // (opposite of the expected order!)
+    campground.geometry = geoData.body.features[0].geometry.coordinates; 
     // req.files it's an array containing information about loaded files provided by Multer
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     // add the author as the current logged user; the id is stored in req.user, provided by Passport

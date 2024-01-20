@@ -17,6 +17,17 @@ ImageSchema.virtual("thumbnail").get(function () {
 const CampgroundSchema = new Schema({
     title: String,
     images: [ImageSchema],
+    geometry: { // GeoJSON format
+        type: {
+            type: String, 
+            enum: ['Point'], // 'type' must be 'Point'
+            required: false
+        },
+        coordinates: {
+            type: [Number],
+            required: false
+        }
+    },
     price: Number,
     description: String,
     location: String,
