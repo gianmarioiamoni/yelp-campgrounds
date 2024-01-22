@@ -15,30 +15,60 @@ module.exports.renderNewForm = (req, res) => {
     res.render("campgrounds/new");
 }
 
-module.exports.createCampground = async (req, res, next) => {
-    // forwarding geocoding provided by Mapbox
-    const geoData = await geocoder.forwardGeocode({
-        query: req.body.campground.location,
-        limit: 1
-    }).send();
+// module.exports.createCampground = async (req, res, next) => {
+//     // forwarding geocoding provided by Mapbox
+//     const geoData = await geocoder.forwardGeocode({
+//         query: req.body.campground.location,
+//         limit: 1
+//     }).send();
 
-    // create a new Campground object 
-    const campground = new Campground(req.body.campground);
+//     // create a new Campground object 
+//     const campground = new Campground(req.body.campground);
     
-    // body.features[0].geometry.coordinates is an array [longitude, latitude]
-    // (opposite of the expected order!)
-    campground.geometry = geoData.body.features[0].geometry.coordinates; 
-    // req.files it's an array containing information about loaded files provided by Multer
-    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
-    // add the author as the current logged user; the id is stored in req.user, provided by Passport
-    campground.author = req.user._id;
+//     // body.features[0].geometry.coordinates is an array [longitude, latitude]
+//     // (opposite of the expected order!)
+//     campground.geometry = geoData.body.features[0].geometry.coordinates;
+//     console.log("req.body = " + JSON.stringify(req.body));
+//     console.log("req.body.features = " + JSON.stringify(req.body.features));
+//     console.log("campground.geometry = " + campground.geometry);
+//     // req.files it's an array containing information about loaded files provided by Multer
+//     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+//     // add the author as the current logged user; the id is stored in req.user, provided by Passport
+//     campground.author = req.user._id;
 
-    await campground.save();
-    console.log(campground);
+//     await campground.save();
+//     console.log(campground);
 
-    req.flash("success", "Successfully made a new campground");
+//     req.flash("success", "Successfully made a new campground");
 
-    res.redirect(`/campgrounds/${campground._id}`);
+//     res.redirect(`/campgrounds/${campground._id}`);
+// }
+module.exports.createCampground = async (req, res, next) => {
+    const query = req.body.campground.location;
+    const mapboxAPIEndpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapBoxToken}`;
+
+    try {
+        const response = await fetch(mapboxAPIEndpoint);
+
+        if (!response.ok) {
+            throw new Error(`Mapbox API request failed with status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+
+        const campground = new Campground(req.body.campground);
+        // body.features[0].geometry.coordinates is an array [longitude, latitude]
+        // (opposite of the expected order!)
+        campground.geometry = data.features[0].geometry;
+        campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }));
+        campground.author = req.user._id;
+        await campground.save();
+        req.flash('success', 'Successfully created a new campground');
+        res.redirect(`/campgrounds/${campground._id}`)
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
 module.exports.showCampground = async (req, res) => {
