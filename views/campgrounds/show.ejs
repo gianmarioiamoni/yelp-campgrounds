@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-6">
         <!-- Mapbox GL-JS map -->
-        <div id='map' style='width: 400px; height: 300px;'></div>
+        <!-- <div id='map' style='width: 400px; height: 300px;'></div> -->
         <!-- carousel for images -->
         <div id="campgroundCarousel" class="carousel slide">
             <div class="carousel-inner">
@@ -60,20 +60,22 @@
                     <div class="card-footer my-3">
                         <a href="/campgrounds" class="card-link">All Campgrounds</a>
                     </div>
-            
                 </div>
             <% } %>
 
         </div>
-
     </div>
+
+    <!-- Right hand column -->
     <div class="col-6">
 
+        <!-- Mapbox GL-JS map -->
+        <div id='map' style='width: 400px; height: 300px;'></div>
         <!-- add a review form. 
              Visible only if there is a logged-in user 
         -->
         <% if (currentUser) { %>
-            <h5>Leave a review</h5>
+            <h5 class="mt-5">Leave a review</h5>
             <form class="mb-3 validated-form" action="/campgrounds/<%=campground._id%>/reviews" method="POST" novalidate>
                 <div class="mb-3">
                     <fieldset class="starability-basic">
