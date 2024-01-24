@@ -31,9 +31,9 @@ const User = require("./models/user");
 const secret = process.env.SECRET;
 
 // development
-const dbUrl = "mongodb://localhost:27017/yelp-camp"
+// const dbUrl = "mongodb://localhost:27017/yelp-camp"
 //// production
-//const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL;
 
 // Mongo store to memorize sessions
 const store = MongoStore.create({
