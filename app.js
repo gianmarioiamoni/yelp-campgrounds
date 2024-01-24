@@ -28,6 +28,8 @@ const helmet = require("helmet");
 
 const User = require("./models/user");
 
+const secret = process.env.SECRET;
+
 // development
 const dbUrl = "mongodb://localhost:27017/yelp-camp"
 //// production
