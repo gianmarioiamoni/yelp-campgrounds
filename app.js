@@ -21,17 +21,22 @@ const userRoute = require("./routes/user")
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
+// solve mongo injection security issue
+const mongoSanitize = require('express-mongo-sanitize');
+
 const User = require("./models/user");
 
 
 // session config
 const sessionConfig = {
+    name: "session", // override default session name, for security reasons
     secret: "thisshouldbeabettersecret!",
     resave: false,
     saveUninitialized: true,
     cookie: {
         // security
         httpOnly: true,
+        // secure: true, // to be added in deployment 
         // setup expiring date in a week for coockie
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
@@ -62,7 +67,14 @@ app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
-})
+});
+
+// By default, $ and . characters are removed completely from user-supplied input in the following places:
+// - req.body
+// - req.params
+// - req.headers
+// - req.query
+app.use(mongoSanitize());
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
