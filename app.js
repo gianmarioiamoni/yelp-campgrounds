@@ -1,11 +1,11 @@
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
-
 const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo'); // use MongoDB to store sessions
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
@@ -28,9 +28,27 @@ const helmet = require("helmet");
 
 const User = require("./models/user");
 
+// development
+const dbUrl = "mongodb://localhost:27017/yelp-camp"
+//// production
+//const dbUrl = process.env.DB_URL;
+
+// Mongo store to memorize sessions
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
+store.on("error", function (err) {
+    console.log("SESSION STORE ERROR", err)
+});
 
 // session config
 const sessionConfig = {
+    store: store, // It uses Mongo to store session information
     name: "session", // override default session name, for security reasons
     secret: "thisshouldbeabettersecret!",
     resave: false,
@@ -46,6 +64,8 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
+
+
 
 // HELMET
 // defines non-self sources to allow
@@ -130,8 +150,6 @@ app.use((req, res, next) => {
 // - req.query
 app.use(mongoSanitize());
 
-
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -173,12 +191,9 @@ main()
 
 async function main() {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+        await mongoose.connect(dbUrl);
         console.log("CONNECTION OPEN to port 27017");
     } catch (err) {
         console.log("CONNECTION ERROR: " + err);
     }
-
-
-
 }
