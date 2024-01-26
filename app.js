@@ -21,6 +21,10 @@ const userRoute = require("./routes/user")
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
+// Google authentication strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+
 // solve mongo injection security issue
 const mongoSanitize = require('express-mongo-sanitize');
 
@@ -31,16 +35,18 @@ const User = require("./models/user");
 const secret = process.env.SECRET;
 
 // development
-// const dbUrl = "mongodb://localhost:27017/yelp-camp"
+const dbUrl = "mongodb://localhost:27017/yelp-camp"
+const cbUrl = "http://localhost:3000/auth/google/callback"
 //// production
-const dbUrl = process.env.DB_URL;
+// const dbUrl = process.env.DB_URL;
+// const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback/auth/google/callback"
 
 // Mongo store to memorize sessions
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: 'thisshouldbeabettersecret!'
+        secret: process.env.SECRET
     }
 });
 
@@ -52,7 +58,7 @@ store.on("error", function (err) {
 const sessionConfig = {
     store: store, // It uses Mongo to store session information
     name: "session", // override default session name, for security reasons
-    secret: "thisshouldbeabettersecret!",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -66,8 +72,6 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
-
-
 
 // HELMET
 // defines non-self sources to allow
@@ -125,12 +129,32 @@ app.use(flash());
 // Passport initialization; session should be initialized before
 app.use(passport.initialize());
 app.use(passport.session());
-// specify the authentication method - defined in User model, added authomatically
+// specify the authentication strategies - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: cbUrl,
+    passReqToCallback: true
+},
+    function (request, accessToken, refreshToken, profile, done) {
+        return done(null, profile);
+    }
+));
+
 // specify how we store a user in the session and how we remove It from the session
 // methods added by password-local-mongoose
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
 
 // middleware for flashes and for user information
 app.use((req, res, next) => {
@@ -167,6 +191,26 @@ app.use("/", userRoute);
 app.get("/", (req, res) => {
     res.render("home");
 });
+
+// Google Auth consent screen route
+app.get('/auth/google',
+    passport.authenticate('google', {
+        scope:
+            ['email', 'profile']
+    }
+    ));
+
+// Google Call back route
+app.get('/auth/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login',
+    }),
+    function (req, res) {
+        res.redirect('/campgrounds')
+
+    }
+);
+
 
 
 app.all("*", (req, res, next) => {
