@@ -84,6 +84,7 @@ const scriptSrcUrls = [
     "https://api.mapbox.com/",
     "https://kit.fontawesome.com/",
     "https://kit-free.fontawesome.com/",
+    "https://ka-f.fontawesome.com",
     "https://cdnjs.cloudflare.com/",
     "https://cdn.jsdelivr.net",
     "https://cdn.jsdelivr.net/"
@@ -91,6 +92,7 @@ const scriptSrcUrls = [
 const styleSrcUrls = [
     "https://kit-free.fontawesome.com/",
     "https://kit-free.fontawesome.com/",
+    "https://ka-f.fontawesome.com",
     "https://stackpath.bootstrapcdn.com/",
     "https://api.mapbox.com/",
     "https://api.tiles.mapbox.com/",
@@ -154,8 +156,6 @@ passport.use(new GoogleStrategy({
     callbackURL: cbUrl,
 },
     function (accessToken, refreshToken, profile, done) {
-        console.log("profile = ", profile);
-
         User.findOrCreate(
             { googleId: profile.id },
             {
@@ -186,7 +186,7 @@ passport.use(new GoogleStrategy({
 passport.serializeUser(function (user, cb) {
     process.nextTick(function () {
         return cb(null, {
-            id: user.id,
+            _id: user._id,
             username: user.username
         });
     });
