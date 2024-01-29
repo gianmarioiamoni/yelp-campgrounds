@@ -22,8 +22,10 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
 // Google authentication strategy
-// const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+
+const FacebookStrategy = require('passport-facebook');
 
 const findOrCreate = require('mongoose-findorcreate')
 
@@ -148,8 +150,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 //     }
 // ));
 
-//********************* GOOGLE Strategy *********************
-
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -165,6 +165,26 @@ passport.use(new GoogleStrategy({
             },
             function (err, user) {
                 return done(err, user);
+            }
+        );
+    }
+));
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+},
+    function (accessToken, refreshToken, profile, cb) {
+        User.findOrCreate(
+            { facebookId: profile.id },
+            {
+                username: profile.displayName,
+                email: profile.email,
+                facebookId: profile.id
+            },
+            function (err, user) {
+                return cb(err, user);
             }
         );
     }
@@ -259,7 +279,7 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
-// Google Auth consent screen route
+// Google Auth consense screen route
 app.get('/auth/google',
     passport.authenticate('google', {
         scope:
@@ -267,9 +287,30 @@ app.get('/auth/google',
     }
     ));
 
-// Google Call back route
+// Google Callback route
 app.get('/auth/google/callback',
     passport.authenticate('google', {
+        failureRedirect: '/login',
+    }),
+    function (req, res) {
+        res.redirect('/campgrounds')
+
+    }
+);
+
+
+// Facebook Auth consense screen route
+app.get('/auth/facebook',
+    passport.authenticate('facebook'));
+        // , {
+    //     scope:
+    //         ['email', 'profile']
+    // }
+    // ));
+
+// Facebook Callback route
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
         failureRedirect: '/login',
     }),
     function (req, res) {

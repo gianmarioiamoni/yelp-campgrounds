@@ -7,3 +7,54 @@
     width: 100%;
     height: 300px;
 }
+
+.google-btn {
+    background-color: #DB4437;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.google-btn:hover {
+    background-color: #DB4437;
+    color: white;
+    opacity: 70%;
+
+}
+
+.google-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.facebook-btn:hover {
+    background-color: #3b5998;
+    color: white;
+    opacity: 70%;
+}
+
+.facebook-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+}

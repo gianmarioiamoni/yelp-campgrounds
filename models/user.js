@@ -12,7 +12,8 @@ const UserSchema = new Schema(
             required: false,
             // unique: false
         },
-        googleId: String
+        googleId: String,
+        facebookId: String
     }
 );
 // add unique username and password to the schema
