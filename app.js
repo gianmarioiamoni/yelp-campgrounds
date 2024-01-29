@@ -22,7 +22,10 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
 // Google authentication strategy
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+
+const findOrCreate = require('mongoose-findorcreate')
 
 
 // solve mongo injection security issue
@@ -132,14 +135,38 @@ app.use(passport.session());
 // specify the authentication strategies - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
 
+// passport.use(new GoogleStrategy({
+//     clientID: process.env.GOOGLE_CLIENT_ID,
+//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//     callbackURL: cbUrl,
+//     passReqToCallback: true
+// },
+//     function (request, accessToken, refreshToken, profile, done) {
+//         return done(null, profile);
+//     }
+// ));
+
+//********************* GOOGLE Strategy *********************
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: cbUrl,
-    passReqToCallback: true
 },
-    function (request, accessToken, refreshToken, profile, done) {
-        return done(null, profile);
+    function (accessToken, refreshToken, profile, done) {
+        console.log("profile = ", profile);
+
+        User.findOrCreate(
+            { googleId: profile.id },
+            {
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                googleId: profile.id
+            },
+            function (err, user) {
+                return done(err, user);
+            }
+        );
     }
 ));
 
@@ -148,13 +175,53 @@ passport.use(new GoogleStrategy({
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 
-passport.serializeUser(function (user, done) {
-    done(null, user);
+// passport.serializeUser(function (user, done) {
+//     done(null, user);
+// });
+
+// passport.deserializeUser(function (user, done) {
+//     done(null, user);
+// });
+
+passport.serializeUser(function (user, cb) {
+    process.nextTick(function () {
+        return cb(null, {
+            id: user.id,
+            username: user.username
+        });
+    });
 });
 
-passport.deserializeUser(function (user, done) {
-    done(null, user);
+// ## Serialize User
+// passport.serializeUser((user, done) => {
+
+//     let sessionUser = {
+
+//         _id: user._id,
+
+//         username: user.username,
+
+//     };
+
+//     done(null, sessionUser);
+// });
+
+passport.deserializeUser(function (user, cb) {
+    process.nextTick(function () {
+        return cb(null, user);
+    });
 });
+
+// // ## Deserialize User
+// passport.deserializeUser((sessionUser, done) => {
+
+//     // The sessionUser object is different from the user mongoose
+//     // collection
+
+//     // It is actually req.session.passport.user and comes from the
+//     // session collection
+//     done(null, sessionUser);
+// });
 
 // middleware for flashes and for user information
 app.use((req, res, next) => {
@@ -210,7 +277,6 @@ app.get('/auth/google/callback',
 
     }
 );
-
 
 
 app.all("*", (req, res, next) => {
