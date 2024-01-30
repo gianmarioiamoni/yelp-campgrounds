@@ -3,6 +3,21 @@
     <div id="cluster-map"></div>
     <!-- Campgrounds index -->
     <h1>All Campgrounds</h1>
+    <!-- Search button -->
+    <div class="col-md-8 offset-md-2">
+        <form action="/campgrounds" class="row g-3" method="GET">
+            <div class="input-group mb-3">
+                <!-- <label class="form-label" for="search">Search</label> -->
+                <input type="text" class="form-control" id="search" name="search" placeholder="Search campgrounds">
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div>
         <a href="/campgrounds/new">New Campground</a>
     </div>

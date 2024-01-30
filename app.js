@@ -88,14 +88,13 @@ const scriptSrcUrls = [
     "https://kit-free.fontawesome.com/",
     "https://ka-f.fontawesome.com",
     "https://cdnjs.cloudflare.com/",
-    "https://cdn.jsdelivr.net",
     "https://cdn.jsdelivr.net/"
 ];
 const styleSrcUrls = [
     "https://kit-free.fontawesome.com/",
-    "https://kit-free.fontawesome.com/",
     "https://ka-f.fontawesome.com",
     "https://stackpath.bootstrapcdn.com/",
+    "https://cdnjs.cloudflare.com",
     "https://api.mapbox.com/",
     "https://api.tiles.mapbox.com/",
     "https://fonts.googleapis.com/",
@@ -107,8 +106,15 @@ const connectSrcUrls = [
     "https://a.tiles.mapbox.com/",
     "https://b.tiles.mapbox.com/",
     "https://events.mapbox.com/",
+    "https://ka-f.fontawesome.com/"
 ];
-const fontSrcUrls = [];
+const fontSrcUrls = [
+    "https://cdnjs.cloudflare.com/",
+    "https://kit-free.fontawesome.com/",
+    "https://ka-f.fontawesome.com/",
+    "https://kit.fontawesome.com/"
+
+];
 // Use Helmet: enables all 11 middlewares helmet comes with
 app.use(
     helmet.contentSecurityPolicy({
