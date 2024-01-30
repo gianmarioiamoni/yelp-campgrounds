@@ -58,3 +58,9 @@
     margin-right: 10px;
     vertical-align: middle;
 }
+
+
+/* Allow to add cancel button to the search input field by overriding defauld Bootstrap behaviour */
+/* input[type=search]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+} */
