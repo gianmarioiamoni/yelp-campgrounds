@@ -17,8 +17,8 @@ module.exports.index = async (req, res) => {
                 { location: { $regex: req.query.search } },
                 { description: { $regex: req.query.search } }]
         } 
-
     }
+
     // const campgrounds = await Campground.find({});
     const campgrounds = await Campground.find(dbQuery);
     res.render("campgrounds/index", { campgrounds });

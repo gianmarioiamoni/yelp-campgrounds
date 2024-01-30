@@ -11,6 +11,40 @@ const map = new mapboxgl.Map({
 // Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
 
+// add current location control to the map
+var geolocate = new mapboxgl.GeolocateControl();
+
+map.addControl(geolocate);
+
+geolocate.on('geolocate', function (e) {
+    var lon = e.coords.longitude;
+    var lat = e.coords.latitude
+    var position = [lon, lat];
+    console.log(position);
+});
+
+//
+// current location
+//
+// Get current location and update map
+navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+    enableHighAccuracy: true
+});
+
+function successLocation(position) {
+    var { latitude, longitude } = position.coords;
+    map.setCenter([longitude, latitude]); // Update map center
+    new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
+    console.log(latitude, longitude);
+}
+
+function errorLocation() {
+    alert('Unable to retrieve your location');
+}
+
+
+//
+
 map.on('load', () => {
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
