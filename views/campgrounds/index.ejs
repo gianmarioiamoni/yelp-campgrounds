@@ -1,4 +1,29 @@
 <% layout("layouts/boilerplate") %>
+
+    <!-- Get current location coordinates -->
+    <script>
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+            enableHighAccuracy: true
+        });
+
+        function successLocation(position) {
+            var { latitude, longitude } = position.coords;
+            console.log("index.ejs - latitude = ", latitude, "longitude = ", longitude);
+            document.getElementById('lgtId').value = longitude;
+            document.getElementById('ltdId').value = latitude;
+            // document.getElementById('lgtId').disabled = true;
+            // document.getElementById('ltdId').disabled = true;
+        }
+
+        function errorLocation() {
+            alert('Unable to retrieve your location');
+        }
+
+        function insertText() {
+                document.getElementById('someId').InnerHTML = splitText;
+            }
+    </script>
+
     <!-- Shows clusters map in the index page -->
     <div id="cluster-map"></div>
     <!-- Campgrounds index -->
@@ -17,8 +42,14 @@
                     <!-- <input class="btn btn-secondary" type="button" style="font-family: FontAwesome" value="&#xf00d;" /> -->
 
                 </div>
-                    <input class="form-control" type="number" id="distance" name="distance" placeholder="distance (Km)" />
+                
+                <input class="form-control" type="number" id="distance" name="distance" placeholder="distance (Km)" />
+                <div class="input-group input-group-sm">    
+                    <input type="hidden" class="form-control" id="ltdId" name="ltdId">
+                    <input type="hidden" class="form-control" id="lgtId" name="lgtId">
+                </div>
             </div>
+
         </form>
     </div>
 
@@ -61,6 +92,7 @@
         const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
         // Mapbox expects an array of data under the key of "features"
         const campgrounds = {features: <%-JSON.stringify(campgrounds)%>};
+        const mapSession = <%-JSON.stringify(session)%>;
     </script>
 
     <script src="/javascripts/clusterMap.js"></script>

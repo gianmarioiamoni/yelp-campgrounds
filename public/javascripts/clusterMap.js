@@ -36,14 +36,14 @@ function successLocation(position) {
     map.setCenter([longitude, latitude]); // Update map center
     new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
     console.log("latitude = ", latitude, "longitude = ", longitude);
+    mapSession.currLgt = longitude;
+    mapSession.currLtd = latitude;
+    console.log("successLocation - session = ", mapSession);
 }
 
 function errorLocation() {
     alert('Unable to retrieve your location');
 }
-
-
-//
 
 map.on('load', () => {
     // Add a new source from our GeoJSON data and

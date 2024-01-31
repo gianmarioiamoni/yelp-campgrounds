@@ -25,6 +25,17 @@ module.exports.storeReturnTo = (req, res, next) => {
     next();
 }
 
+// stores req.session.currLgt .currLtd in res.locals
+module.exports.storeCurrCoord = (req, res, next) => {
+    if (req.session.currLgt) {
+        res.locals.currLgt = req.session.Lgt;
+    }
+    if (req.session.currLtd) {
+        res.locals.currLtd = req.session.Ltd;
+    }
+    next();
+}
+
 // middleware validation function for campground
 module.exports.validateCampground = (req, res, next) => {
 

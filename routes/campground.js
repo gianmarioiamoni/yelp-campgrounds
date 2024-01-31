@@ -13,10 +13,12 @@ const multer = require('multer');
 // const upload = multer({ dest: 'uploads/' });
 const upload = multer({ storage });
 
+const { storeCurrCoord } = require("../middleware");
+
 
 router.route("/")
     // index route
-    .get(catchAsync(campgrounds.index))
+    .get(storeCurrCoord, catchAsync(campgrounds.index))
     // create a new campground route
     // upload middleware is for parsing multicode objects for image upload
     // "image" is the form name used to upload the image

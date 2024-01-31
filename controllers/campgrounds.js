@@ -1,24 +1,15 @@
 const Campground = require("../models/campground");
 const { cloudinary } = require("../cloudinary");
 
+const { storeCurrCoord } = require("../middleware");
+
 // Mapbox SDK for geocoding
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
+// const { currLgt, currLtd } = require("../public/javascripts/clusterMap");
 
-
-// function successLocation(position) {
-//     var { latitude, longitude } = position.coords;
-//     // map.setCenter([longitude, latitude]); // Update map center
-//     // new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
-    
-//     console.log("in index: latitude = ", latitude, "longitude = ", longitude);
-// }
-
-// function errorLocation() {
-//     alert('Unable to retrieve your location');
-// }
 
 module.exports.index = async (req, res) => {
     let dbQuery = {};
@@ -27,8 +18,36 @@ module.exports.index = async (req, res) => {
     // latitude =  45.7409757 longitude =  8.523871
     const ltd = 45.7409757;
     const lgd = 8.523871;
+    const session = req.session;
+    // const {}
+    
+    // //
+    // // get current coord
+    // //
+    // window.navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+    //     enableHighAccuracy: true
+    // });
 
-    let { search, distance } = req.query;
+    // function successLocation(position) {
+    //     var { latitude, longitude } = position.coords;
+    //     console.log("campgrounds.js - latitude = ", latitude, "longitude = ", longitude);
+    // }
+
+    // function errorLocation() {
+    //     alert('Unable to retrieve your location');
+    // }
+
+
+    //////////////
+
+    // currLgt = ;
+    // currLtd = ;
+
+    // console.log("currLgt", currLgt, "currLtd = ", currLtd);
+
+    // console.log("index - session = ", session);
+
+    let { search, distance, ltdId, lgtId } = req.query;
     if (distance == null) {
         console.log("distance is either undefined or null");
     
@@ -56,7 +75,7 @@ module.exports.index = async (req, res) => {
         } 
     }
 
-    if (distance === "0" || distance == null) {
+    if (distance === "0" || distance == null || distance === 0) {
         distanceQuery = {};
     } else {
         // we have a distance query
@@ -66,8 +85,8 @@ module.exports.index = async (req, res) => {
                     $maxDistance: distance*1000,
                     $geometry: {
                         type: "Point",
-                        coordinates: [-89.0939952, 42.2711311]
-                        // coordinates: [42.2711311, -89.0939952]
+                        // coordinates: [-89.0939952, 42.2711311]
+                        coordinates: [lgtId, ltdId]
                     },
                 },
             },
@@ -87,7 +106,7 @@ module.exports.index = async (req, res) => {
 
     // const campgrounds = await Campground.find({});
     const campgrounds = await Campground.find(dbQuery);
-    res.render("campgrounds/index", { campgrounds });
+    res.render("campgrounds/index", { campgrounds, session });
 }
 
 module.exports.renderNewForm = (req, res) => {

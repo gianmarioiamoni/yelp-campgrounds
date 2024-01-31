@@ -77,6 +77,7 @@ const sessionConfig = {
     }
 };
 
+
 app.use(session(sessionConfig));
 
 // // HELMET
