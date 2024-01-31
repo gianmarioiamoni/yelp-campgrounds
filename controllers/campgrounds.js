@@ -29,8 +29,12 @@ module.exports.index = async (req, res) => {
     const lgd = 8.523871;
 
     let { search, distance } = req.query;
-
-    distance = Number(distance);
+    if (distance == null) {
+        console.log("distance is either undefined or null");
+    
+    } else {
+        distance = Number(distance);
+    }
     console.log("distance = ", distance);
     console.log("type of distance = ", typeof distance);
 
@@ -52,7 +56,9 @@ module.exports.index = async (req, res) => {
         } 
     }
 
-    if (distance !== "0") {
+    if (distance === "0" || distance == null) {
+        distanceQuery = {};
+    } else {
         // we have a distance query
         distanceQuery = {
             geometry: {
@@ -75,6 +81,7 @@ module.exports.index = async (req, res) => {
         ]
 
     };
+    // dbQuery = searchQuery;
 
     console.log("dbQuery = ", JSON.stringify(dbQuery));
 
