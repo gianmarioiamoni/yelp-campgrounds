@@ -20,6 +20,7 @@ const CampgroundSchema = new Schema({
     geometry: { // GeoJSON format
         type: {
             type: String, 
+            index: true,
             enum: ['Point'], // 'type' must be 'Point'
             required: false
         },

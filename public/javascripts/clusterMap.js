@@ -20,7 +20,7 @@ geolocate.on('geolocate', function (e) {
     var lon = e.coords.longitude;
     var lat = e.coords.latitude
     var position = [lon, lat];
-    console.log(position);
+    console.log("position = ", position);
 });
 
 //
@@ -35,7 +35,7 @@ function successLocation(position) {
     var { latitude, longitude } = position.coords;
     map.setCenter([longitude, latitude]); // Update map center
     new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
-    console.log(latitude, longitude);
+    console.log("latitude = ", latitude, "longitude = ", longitude);
 }
 
 function errorLocation() {

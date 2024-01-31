@@ -6,18 +6,77 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
+
+
+// function successLocation(position) {
+//     var { latitude, longitude } = position.coords;
+//     // map.setCenter([longitude, latitude]); // Update map center
+//     // new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
+    
+//     console.log("in index: latitude = ", latitude, "longitude = ", longitude);
+// }
+
+// function errorLocation() {
+//     alert('Unable to retrieve your location');
+// }
+
 module.exports.index = async (req, res) => {
     let dbQuery = {};
-    if (req.query.search) {
+    let searchQuery = {};
+    let distanceQuery = {};
+    // latitude =  45.7409757 longitude =  8.523871
+    const ltd = 45.7409757;
+    const lgd = 8.523871;
+
+    let { search, distance } = req.query;
+
+    distance = Number(distance);
+    console.log("distance = ", distance);
+    console.log("type of distance = ", typeof distance);
+
+    // // Get current location
+    // Object.navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+    //     enableHighAccuracy: true
+    // });
+    
+    // console.log("req = ", req);
+    if (search) {
         // we have a not null search query
         console.log("req.query = ", req.query);
-        dbQuery = {
+        // dbQuery = {
+        searchQuery = {
             $or: [
-                { title: { $regex: req.query.search } },
-                { location: { $regex: req.query.search } },
-                { description: { $regex: req.query.search } }]
+                { title: { $regex: search } },
+                { location: { $regex: search } },
+                { description: { $regex: search } }]
         } 
     }
+
+    if (distance !== "0") {
+        // we have a distance query
+        distanceQuery = {
+            geometry: {
+                $near: {
+                    $maxDistance: distance*1000,
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [-89.0939952, 42.2711311]
+                        // coordinates: [42.2711311, -89.0939952]
+                    },
+                },
+            },
+        }
+    }
+
+    dbQuery = {
+        $and: [
+            searchQuery,
+            distanceQuery
+        ]
+
+    };
+
+    console.log("dbQuery = ", JSON.stringify(dbQuery));
 
     // const campgrounds = await Campground.find({});
     const campgrounds = await Campground.find(dbQuery);
