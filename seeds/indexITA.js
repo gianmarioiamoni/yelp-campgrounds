@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Campground = require("../models/campground");
-const cities = require("./cities");
+// const cities = require("./cities");
 // const cities = require("./citiesITA");
-const { places, descriptors } = require("./seedHelpers");
+// const { places, descriptors } = require("./seedHelpers");
 // const { places, descriptors } = require("./seedHelpersITA");
-// const camps = require("./campITA");
+const campsITA = require("./campITA");
 const { url } = require('inspector');
 
 
@@ -16,27 +16,26 @@ async function main() {
         await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
         console.log("CONNECTION OPEN to port 27017");
 
-        const sample = (array) => array[Math.floor(Math.random() * array.length)];
+        // const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
         const seedDB = async () => {
             await Campground.deleteMany({});
-            for (let i = 0; i < 200; i++) {
+            for (let campITA of campsITA) {
                 // const random1000 = Math.floor(Math.random() * 1000);
-                const random1000 = Math.floor(Math.random() * 126);
+                // const random1000 = Math.floor(Math.random() * 126);
                 const price = Math.floor(Math.random() * 20) + 10;
 
                 const camp = new Campground({
                     author: '65b6fabdd3d893d389788c1e',
-                    location: `${cities[random1000].city}, ${cities[random1000].state}`,
-                    // title: `${sample(descriptors)} ${sample(places)}`,
-                    title: `${sample(places)} ${sample(descriptors)}`,
-                    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!',
+                    location: `${campITA.city}, ${campITA.state}`,
+                    title: `${campITA.title}`,
+                    description: `${campITA.description}`,
                     price,
                     geometry: {
                         type: "Point",
                         coordinates: [
-                            cities[random1000].longitude,
-                            cities[random1000].latitude]
+                            campITA.longitude,
+                            campITA.latitude]
                     },
                     images: [
                         {

@@ -11,8 +11,6 @@
             console.log("index.ejs - latitude = ", latitude, "longitude = ", longitude);
             document.getElementById('lgtId').value = longitude;
             document.getElementById('ltdId').value = latitude;
-            // document.getElementById('lgtId').disabled = true;
-            // document.getElementById('ltdId').disabled = true;
         }
 
         function errorLocation() {
@@ -32,18 +30,14 @@
     <div class="col-md-8 offset-md-2">
         <form action="/campgrounds" class="row g-3" method="GET">
             <div class="input-group mb-3">
-                <!-- <label class="form-label" for="search">Search</label> -->
                 <input type="search" class="form-control" id="search" name="search" placeholder="Search campgrounds">
                 <div class="input-group-append">
-                    <!-- <button class="btn btn-secondary" type="button">
-                        <i class="fa fa-search"></i>
-                    </button> -->
                     <input class="btn btn-secondary" type="submit" style="font-family: FontAwesome" value="&#xf002;" />
-                    <!-- <input class="btn btn-secondary" type="button" style="font-family: FontAwesome" value="&#xf00d;" /> -->
-
                 </div>
                 
                 <input class="form-control" type="number" id="distance" name="distance" placeholder="distance (Km)" />
+                <!-- Hidden inputs to store current coordinates
+                They will be passed to the query, to be read by the index.js controller -->
                 <div class="input-group input-group-sm">    
                     <input type="hidden" class="form-control" id="ltdId" name="ltdId">
                     <input type="hidden" class="form-control" id="lgtId" name="lgtId">
@@ -92,7 +86,6 @@
         const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
         // Mapbox expects an array of data under the key of "features"
         const campgrounds = {features: <%-JSON.stringify(campgrounds)%>};
-        const mapSession = <%-JSON.stringify(session)%>;
     </script>
 
     <script src="/javascripts/clusterMap.js"></script>

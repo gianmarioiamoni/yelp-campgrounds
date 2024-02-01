@@ -1,68 +1,28 @@
 const Campground = require("../models/campground");
 const { cloudinary } = require("../cloudinary");
 
-const { storeCurrCoord } = require("../middleware");
-
 // Mapbox SDK for geocoding
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
-// const { currLgt, currLtd } = require("../public/javascripts/clusterMap");
-
-
+// 
+// campgrounds INDEX
+//
 module.exports.index = async (req, res) => {
     let dbQuery = {};
     let searchQuery = {};
     let distanceQuery = {};
-    // latitude =  45.7409757 longitude =  8.523871
-    const ltd = 45.7409757;
-    const lgd = 8.523871;
-    const session = req.session;
-    // const {}
-    
-    // //
-    // // get current coord
-    // //
-    // window.navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
-    //     enableHighAccuracy: true
-    // });
-
-    // function successLocation(position) {
-    //     var { latitude, longitude } = position.coords;
-    //     console.log("campgrounds.js - latitude = ", latitude, "longitude = ", longitude);
-    // }
-
-    // function errorLocation() {
-    //     alert('Unable to retrieve your location');
-    // }
-
-
-    //////////////
-
-    // currLgt = ;
-    // currLtd = ;
-
-    // console.log("currLgt", currLgt, "currLtd = ", currLtd);
-
-    // console.log("index - session = ", session);
 
     let { search, distance, ltdId, lgtId } = req.query;
+
     if (distance == null) {
         console.log("distance is either undefined or null");
     
     } else {
         distance = Number(distance);
     }
-    console.log("distance = ", distance);
-    console.log("type of distance = ", typeof distance);
-
-    // // Get current location
-    // Object.navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
-    //     enableHighAccuracy: true
-    // });
-    
-    // console.log("req = ", req);
+   
+    // create string search query
     if (search) {
         // we have a not null search query
         console.log("req.query = ", req.query);
@@ -75,6 +35,7 @@ module.exports.index = async (req, res) => {
         } 
     }
 
+    // create distance search query
     if (distance === "0" || distance == null || distance === 0) {
         distanceQuery = {};
     } else {
@@ -85,7 +46,6 @@ module.exports.index = async (req, res) => {
                     $maxDistance: distance*1000,
                     $geometry: {
                         type: "Point",
-                        // coordinates: [-89.0939952, 42.2711311]
                         coordinates: [lgtId, ltdId]
                     },
                 },
@@ -93,6 +53,7 @@ module.exports.index = async (req, res) => {
         }
     }
 
+    // create the final query
     dbQuery = {
         $and: [
             searchQuery,
@@ -100,14 +61,14 @@ module.exports.index = async (req, res) => {
         ]
 
     };
-    // dbQuery = searchQuery;
 
-    console.log("dbQuery = ", JSON.stringify(dbQuery));
-
-    // const campgrounds = await Campground.find({});
     const campgrounds = await Campground.find(dbQuery);
-    res.render("campgrounds/index", { campgrounds, session });
+    res.render("campgrounds/index", { campgrounds });
 }
+
+//
+// NEW campground
+//
 
 module.exports.renderNewForm = (req, res) => {
     res.render("campgrounds/new");
@@ -132,7 +93,9 @@ module.exports.createCampground = async (req, res, next) => {
         campground.geometry = data.features[0].geometry;
         campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }));
         campground.author = req.user._id;
+        
         await campground.save();
+        
         req.flash('success', 'Successfully created a new campground');
         res.redirect(`/campgrounds/${campground._id}`)
     } catch (error) {
@@ -141,6 +104,9 @@ module.exports.createCampground = async (req, res, next) => {
     }
 }
 
+//
+// SHOW campground
+//
 module.exports.showCampground = async (req, res) => {
     // find the campground to show and populate its reviews field
     const campground = await Campground.findById(req.params.id)
@@ -159,6 +125,9 @@ module.exports.showCampground = async (req, res) => {
     res.render("campgrounds/show", { campground });
 }
 
+//
+// EDIT campground
+//
 module.exports.renderEditForm = async (req, res) => {
     const { id } = req.params;
 
@@ -182,7 +151,7 @@ module.exports.updateCampground = async (req, res) => {
     // Delete images
     // We have access to deleteImages[], containing the images to be deleted
     if (req.body.deleteImages) {
-        // if there are images to be deleted
+        // there are images to be deleted
         
         // delete images from MongoDB
         await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
@@ -202,6 +171,9 @@ module.exports.updateCampground = async (req, res) => {
 
 }
 
+//
+// DELETE campground
+//
 module.exports.deleteCampground = async (req, res) => {
     const { id } = req.params;
 
@@ -210,8 +182,3 @@ module.exports.deleteCampground = async (req, res) => {
     req.flash("success", "Successfully deleted campground");
     res.redirect("/campgrounds");
 }
-
-
-
-
-

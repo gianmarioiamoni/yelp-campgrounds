@@ -26,7 +26,7 @@ geolocate.on('geolocate', function (e) {
 //
 // current location
 //
-// Get current location and update map
+// Get current location, center map on that and add a marker
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
     enableHighAccuracy: true
 });
@@ -34,11 +34,7 @@ navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
 function successLocation(position) {
     var { latitude, longitude } = position.coords;
     map.setCenter([longitude, latitude]); // Update map center
-    new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
-    console.log("latitude = ", latitude, "longitude = ", longitude);
-    mapSession.currLgt = longitude;
-    mapSession.currLtd = latitude;
-    console.log("successLocation - session = ", mapSession);
+    new mapboxgl.Marker({color: "red"}).setLngLat([longitude, latitude]).addTo(map); // Add marker at current location
 }
 
 function errorLocation() {

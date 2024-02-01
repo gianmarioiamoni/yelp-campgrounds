@@ -1,3 +1,7 @@
+//
+// Joi schemas - used to validate forms inputs on server-end side
+//
+
 const BaseJoi = require("joi");
 const sanitizeHtml = require("sanitize-html");
 
@@ -26,7 +30,6 @@ const extension = (joi) => ({
 const Joi = BaseJoi.extend(extension);
 
 // validation from server side with Joi
-
 module.exports.campgroundSchema = Joi.object({
     campground: Joi.object({
         title: Joi.string().required().escapeHTML(),

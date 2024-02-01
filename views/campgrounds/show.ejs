@@ -3,8 +3,6 @@
 
 <div class="row">
     <div class="col-6">
-        <!-- Mapbox GL-JS map -->
-        <!-- <div id='map' style='width: 400px; height: 300px;'></div> -->
         <!-- carousel for images -->
         <div id="campgroundCarousel" class="carousel slide">
             <div class="carousel-inner">
@@ -107,16 +105,10 @@
         <% for (let review of campground.reviews) { %>
             <div class="card mb-3">
                 <div class="card-body">
-                    <!-- <h5>
-                        <div class="card-title">
-                            Rating: <%= review.rating %>
-                        </div>
-                    </h5> -->
                     <h6 class="card-subtitle mb-2 text-body-tertiary"><%= review.author.username %></h6>
                     <p class="starability-result" data-rating="<%= review.rating %>">
                         Rated: <%= review.rating  %> stars
                     </p>
-                    <!-- <h6 class="card-subtitle mb-2 text-body-tertiary">By <%= review.author.username %></h6> -->
                     <p class="card-text"> Review: <%= review.body %></p>
 
                     <!-- review delete button 

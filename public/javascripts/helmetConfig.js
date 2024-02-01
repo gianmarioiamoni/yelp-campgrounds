@@ -35,6 +35,7 @@ const fontSrcUrls = [
     "https://kit.fontawesome.com/"
 
 ];
+
 // Use Helmet: enables all 11 middlewares helmet comes with
 module.exports.helmetSecurityPolicy = {
     directives: {

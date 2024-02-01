@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-// controllers
 const campgrounds = require("../controllers/campgrounds");
 const catchAsync = require("../utils/catchAsync");
 const { isLoggedIn, isAuthor, validateCampground } = require("../middleware");
@@ -10,15 +9,12 @@ const { storage } = require("../cloudinary"); // index not needed, automatically
 
 // to parse multicode for images upload
 const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' });
 const upload = multer({ storage });
-
-const { storeCurrCoord } = require("../middleware");
 
 
 router.route("/")
     // index route
-    .get(storeCurrCoord, catchAsync(campgrounds.index))
+    .get(catchAsync(campgrounds.index))
     // create a new campground route
     // upload middleware is for parsing multicode objects for image upload
     // "image" is the form name used to upload the image

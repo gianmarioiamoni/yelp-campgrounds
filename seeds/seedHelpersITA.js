@@ -1,0 +1,45 @@
+module.exports.descriptors = [
+    'la Perla',
+    'del Pescatore',
+    'del Porto',
+    'ai Castagni',
+    'al Porto',
+    'Panorama',
+    'Bellavista',
+    'Riviera',
+    'Penisola Verde',
+    'al Lago',
+    'Due Laghi',
+    'Paradiso',
+    'del Grizzly',
+    'Oceano',
+    'Terrazza sul Mare',
+    'Blue Sky',
+    'Gabbiano Beach',
+    'del Sole'
+]
+
+module.exports.places = [
+    'Casa',
+    'Villaggio',
+    'Resort',
+    'Villaggio Camping',
+    'Residence',
+    'Camping Apartment',
+    'Villaggio Residence',
+    'Camp',
+    'Campeggio',
+    'Camping',
+    'Residenza Turistica Camping',
+    'Camping Vacanze',
+    'Residenza Vacanze',
+    'Baia Village',
+    'Campeggio Turistico',
+    'Camping Turistico',
+    'Villaggio Vacanze',
+    'Villaggio Turistico',
+    'Centro Turistico',
+    'Camping Village',
+    'Holiday Village'
+]
+
