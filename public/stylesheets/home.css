@@ -13,6 +13,7 @@ body {
     max-width: 60vw;
 }
 
+
 /* Navbar */
 .nav-link {
     padding: 0.25rem 0;
@@ -30,7 +31,7 @@ body {
 .nav-link.active {
     color: white;
     border-bottom-color: white;
-}
+} 
 
 /* Button */
 .btn-secondary {
@@ -40,4 +41,4 @@ body {
 
 .btn-secondary:hover {
     color: darkslategrey;
-}
+} 
