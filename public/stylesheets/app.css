@@ -59,3 +59,9 @@
     vertical-align: middle;
 }
 
+.navbar-brand.user-brand {
+    /* color:darkorange; */
+    color:cornflowerblue;
+    margin-right: 5px;
+    
+}
