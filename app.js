@@ -40,11 +40,11 @@ const User = require("./models/user");
 
 const secret = process.env.SECRET;
 // DEVELOPMENT
-// const dbUrl = "mongodb://localhost:27017/yelp-camp"
-// const cbUrl = "http://localhost:3000/auth/google/callback"
-//// DEPLOYMENT
-const dbUrl = process.env.DB_URL;
-const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback"
+const localDbUrl = "mongodb://localhost:27017/yelp-camp"
+const localCbUrl = "http://localhost:3000/auth/google/callback"
+
+const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
+const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : localCbUrl;
 
 // Mongo store to memorize sessions
 const store = MongoStore.create({
@@ -69,7 +69,8 @@ const sessionConfig = {
     cookie: {
         // security
         httpOnly: true,
-        secure: true, // to be added in deployment 
+        // secure: true, // to be added in deployment 
+        secure: (process.env.NODE_ENV === 'production'),
         // setup expiring date in a week for coockie
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
