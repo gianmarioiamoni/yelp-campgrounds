@@ -45,7 +45,7 @@ const secret = process.env.SECRET;
 // const cbUrl = "http://localhost:3000/auth/google/callback"
 //// production
 const dbUrl = process.env.DB_URL;
-const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback/auth/google/callback"
+const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback"
 
 // Mongo store to memorize sessions
 const store = MongoStore.create({
