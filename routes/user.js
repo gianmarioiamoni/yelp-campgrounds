@@ -24,7 +24,7 @@ router.route("/login")
     // passport.authenticate() is a middleware provided by Passport
     // It uses the "local" strategy and accepts some options"
     .post(storeReturnTo,
-    passport.authenticate("local", { failureFlash: true, failureRedirect: "/login" }),
+        passport.authenticate("local", { failureFlash: true, failureRedirect: "/login", session: true, }),
     catchAsync(users.login)
     );
 

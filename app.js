@@ -39,13 +39,12 @@ const { helmetSecurityPolicy } = require("./public/javascripts/helmetConfig");
 const User = require("./models/user");
 
 const secret = process.env.SECRET;
-
-// development
-// const dbUrl = "mongodb://localhost:27017/yelp-camp"
-// const cbUrl = "http://localhost:3000/auth/google/callback"
-//// production
-const dbUrl = process.env.DB_URL;
-const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback"
+// DEVELOPMENT
+const dbUrl = "mongodb://localhost:27017/yelp-camp"
+const cbUrl = "http://localhost:3000/auth/google/callback"
+//// DEPLOYMENT
+// const dbUrl = process.env.DB_URL;
+// const cbUrl = "https://yelpcampground-6p9b.onrender.com/auth/google/callback"
 
 // Mongo store to memorize sessions
 const store = MongoStore.create({
@@ -70,7 +69,7 @@ const sessionConfig = {
     cookie: {
         // security
         httpOnly: true,
-        secure: true, // to be added in deployment 
+        // secure: true, // to be added in deployment 
         // setup expiring date in a week for coockie
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
@@ -80,64 +79,7 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 
-// // HELMET
-// // defines allowed non-self sources
-// const scriptSrcUrls = [
-//     "https://stackpath.bootstrapcdn.com/",
-//     "https://api.tiles.mapbox.com/",
-//     "https://api.mapbox.com/",
-//     "https://kit.fontawesome.com/",
-//     "https://kit-free.fontawesome.com/",
-//     "https://ka-f.fontawesome.com",
-//     "https://cdnjs.cloudflare.com/",
-//     "https://cdn.jsdelivr.net/"
-// ];
-// const styleSrcUrls = [
-//     "https://kit-free.fontawesome.com/",
-//     "https://ka-f.fontawesome.com",
-//     "https://stackpath.bootstrapcdn.com/",
-//     "https://cdnjs.cloudflare.com",
-//     "https://api.mapbox.com/",
-//     "https://api.tiles.mapbox.com/",
-//     "https://fonts.googleapis.com/",
-//     "https://use.fontawesome.com/",
-//     "https://cdn.jsdelivr.net/"
-// ];
-// const connectSrcUrls = [
-//     "https://api.mapbox.com/",
-//     "https://a.tiles.mapbox.com/",
-//     "https://b.tiles.mapbox.com/",
-//     "https://events.mapbox.com/",
-//     "https://ka-f.fontawesome.com/"
-// ];
-// const fontSrcUrls = [
-//     "https://cdnjs.cloudflare.com/",
-//     "https://kit-free.fontawesome.com/",
-//     "https://ka-f.fontawesome.com/",
-//     "https://kit.fontawesome.com/"
-
-// ];
-// Use Helmet: enables all 11 middlewares helmet comes with
 app.use(helmet.contentSecurityPolicy(helmetSecurityPolicy));
-//     helmet.contentSecurityPolicy({
-//         directives: {
-//             defaultSrc: [],
-//             connectSrc: ["'self'", ...connectSrcUrls],
-//             scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-//             styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-//             workerSrc: ["'self'", "blob:"],
-//             objectSrc: [],
-//             imgSrc: [
-//                 "'self'",
-//                 "blob:",
-//                 "data:",
-//                 `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`, //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
-//                 "https://images.unsplash.com/",
-//             ],
-//             fontSrc: ["'self'", ...fontSrcUrls],
-//         },
-//     })
-// );
 
 app.use(flash());
 
@@ -255,6 +197,8 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
     passport.authenticate('google', {
         failureRedirect: '/login',
+        failureFlash: true,
+        session: true,
     }),
     function (req, res) {
         res.redirect('/campgrounds')
@@ -276,6 +220,8 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/login',
+        failureFlash: true,
+        session: true,
     }),
     function (req, res) {
         res.redirect('/campgrounds')
