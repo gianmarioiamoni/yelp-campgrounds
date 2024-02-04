@@ -23,7 +23,6 @@ const LocalStrategy = require("passport-local");
 
 // Google authentication strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-// const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const FacebookStrategy = require('passport-facebook');
 
@@ -69,7 +68,7 @@ const sessionConfig = {
     cookie: {
         // security
         httpOnly: true,
-        // secure: true, // to be added in deployment 
+        // secure: true to be added in deployment only 
         secure: (process.env.NODE_ENV === 'production'),
         // setup expiring date in a week for coockie
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
@@ -94,6 +93,7 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: cbUrl,
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
     function (accessToken, refreshToken, profile, done) {
         User.findOrCreate(
@@ -134,6 +134,15 @@ passport.use(new FacebookStrategy({
 // methods added by password-local-mongoose
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
+
+// passport.serializeUser(function (user, done) {
+//     done(null, user.id);
+// });
+// passport.deserializeUser(function (id, done) {
+//     User.findById(id, function (err, user) {
+//         done(err, user);
+//     });
+// });
 
 passport.serializeUser(function (user, cb) {
     process.nextTick(function () {
@@ -202,6 +211,7 @@ app.get('/auth/google/callback',
         session: true,
     }),
     function (req, res) {
+        // Successful authentication, redirect secrets
         res.redirect('/campgrounds')
 
     }
@@ -211,11 +221,6 @@ app.get('/auth/google/callback',
 // Facebook Auth consense screen route
 app.get('/auth/facebook',
     passport.authenticate('facebook'));
-        // , {
-    //     scope:
-    //         ['email', 'profile']
-    // }
-    // ));
 
 // Facebook Callback route
 app.get('/auth/facebook/callback',

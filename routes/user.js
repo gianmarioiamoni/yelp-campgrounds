@@ -8,13 +8,13 @@ const passport = require("passport");
 const users = require("../controllers/user");
 
 // middleware function to retrieve the stored returnTo path
-const { storeReturnTo } = require('../middleware');
+const { storeReturnTo, isValidUser } = require('../middleware');
 
 router.route("/register")
     // route to serve the registration form
     .get(users.renderRegister)
     // route for the POST request
-    .post(catchAsync(users.register));
+    .post(isValidUser, catchAsync(users.register));
 
 router.route("/login")
     // route to serve the login form

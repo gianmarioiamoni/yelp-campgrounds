@@ -1,5 +1,6 @@
 const Campground = require("./models/campground");
 const Review = require("./models/review");
+const User = require("./models/user");
 const { campgroundSchema, reviewSchema } = require("./schemas");
 const ExpressError = require("./utils/ExpressError");
 
@@ -7,7 +8,7 @@ const ExpressError = require("./utils/ExpressError");
 
 // middleware to check if an user is authenticated
 module.exports.isLoggedIn = (req, res, next) => {
-    // isAuthenticated() is an helper function coming from Paaport
+    // isAuthenticated() is an helper function coming from Passport
     if (!req.isAuthenticated()) {
         // store in the session the path we want to redirect the user to after login
         req.session.returnTo = req.originalUrl;
@@ -78,3 +79,24 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     }
     next();
 };
+
+
+// USERS MIDDLEWARE
+
+// middleware to check if the new user has unique email
+// middleware to check if an user is authenticated
+module.exports.isValidUser = async (req, res, next) => {
+    const { email, username, password } = req.body;
+    const userByEmail = await User.findOne({ email: email });
+    const userByUsername = await User.findOne({ username: username });
+
+    if (userByEmail) {
+        req.flash("error", "Email already in use");
+        return res.redirect("/register");
+    }
+    if (userByUsername) {
+        req.flash("error", "Username already in use");
+        return res.redirect("/register");
+    }
+    next();
+}
