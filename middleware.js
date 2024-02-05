@@ -83,8 +83,7 @@ module.exports.isReviewAuthor = async (req, res, next) => {
 
 // USERS MIDDLEWARE
 
-// middleware to check if the new user has unique email
-// middleware to check if an user is authenticated
+// middleware to check if the new user has unique email and username
 module.exports.isValidUser = async (req, res, next) => {
     const { email, username, password } = req.body;
     const userByEmail = await User.findOne({ email: email });
@@ -97,6 +96,19 @@ module.exports.isValidUser = async (req, res, next) => {
     if (userByUsername) {
         req.flash("error", "Username already in use");
         return res.redirect("/register");
+    }
+    next();
+}
+
+module.exports.isLocalUser = async (req, res, next) => {
+    const { email, username, password } = req.body;
+    const user = await User.findOne({ username: username });
+
+    console.log("user = ", user);
+
+    if (user !== null && (user.googleId !== null || user.facebookId !== null)) {
+        req.flash("error", "Password chnage is possible for local users only");
+        return res.redirect("/campgrounds");
     }
     next();
 }

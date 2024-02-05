@@ -72,13 +72,9 @@ module.exports.changePassword = async (req, res) => {
         }
 
         const user = await User.findOne({ username: req.user.username });
-        console.log("user = ", user);
 
-        // await user.setPassword(req.body.password);
-        // const updatedUser = await user.save();
-        // req.login(updatedUser);
         await user.changePassword(oldPassword, newPassword);
-        
+
         req.flash('success', 'Password Changed Successfully');
         res.redirect('/campgrounds')
 
@@ -90,20 +86,3 @@ module.exports.changePassword = async (req, res) => {
 
 }
 
-// if (typeof req.user === 'undefined') {
-//     res.redirect('/login')
-// } else {
-//     User.findOne({ _id: req.user._id }, function (err, user) {
-//         if (!err) {
-//             user.changePassword(req.body.oldPassword, req.body.newPassword, function (err) {
-//                 if (!err) {
-//                     res.redirect('/login')
-//                 } else {
-//                     console.log(err);
-//                 }
-//             })
-//         } else {
-//             console.log(err);
-//         }
-//     })
-// }

@@ -8,7 +8,7 @@ const passport = require("passport");
 const users = require("../controllers/user");
 
 // middleware function to retrieve the stored returnTo path
-const { storeReturnTo, isValidUser } = require('../middleware');
+const { storeReturnTo, isValidUser, isLocalUser } = require('../middleware');
 
 router.route("/register")
     // route to serve the registration form
@@ -39,10 +39,10 @@ router.get("/logout", users.logout);
 // change password
 router.route("/changePassword")
     // route to serve the change password form
-    .get(users.renderChangePassword)
+    .get(isLocalUser, users.renderChangePassword)
     // route for POST request
     // changePassword() is provided by password-local-mongoose
-    .post(isValidUser, users.changePassword);
+    .post(isValidUser, isLocalUser, catchAsync(users.changePassword));
     
 
 
