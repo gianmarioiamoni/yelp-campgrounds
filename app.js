@@ -132,17 +132,6 @@ passport.use(new FacebookStrategy({
 
 // specify how we store a user in the session and how we remove It from the session
 // methods added by password-local-mongoose
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
-
-// passport.serializeUser(function (user, done) {
-//     done(null, user.id);
-// });
-// passport.deserializeUser(function (id, done) {
-//     User.findById(id, function (err, user) {
-//         done(err, user);
-//     });
-// });
 
 passport.serializeUser(function (user, cb) {
     process.nextTick(function () {

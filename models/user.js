@@ -13,7 +13,8 @@ const UserSchema = new Schema({
     },
     username: String,
     googleId: String,
-    facebookId: String
+    facebookId: String,
+    strategy: String
 });
 
 // add unique username and password to the schema

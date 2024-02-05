@@ -16,7 +16,7 @@
                     <a href="/login" class="nav-link">Login</a>
                     <a href="/register" class="nav-link">Register</a>
                 <% } else { %>
-                    <a class="navbar-brand user-brand" ><%= currentUser.username %></a>
+                    <a href="/changePassword" class="navbar-brand user-brand" ><%= currentUser.username %></a>
                     <a href="/logout" class="nav-link">Logout</a>
                     <!-- <a class="navbar-brand user-brand" ><%= currentUser.username %></a> -->
                 <% } %>

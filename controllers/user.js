@@ -30,7 +30,7 @@ module.exports.register = async (req, res, next) => {
 }
 
 module.exports.renderLogin = (req, res) => {
-    res.render("users/login")
+    res.render("users/login");
 }
 
 module.exports.login = async (req, res) => {
@@ -53,3 +53,57 @@ module.exports.logout = (req, res, next) => {
     });
 
 }
+
+module.exports.renderChangePassword = (req, res) => {
+    res.render("users/changePassword");
+}
+
+module.exports.changePassword = async (req, res) => {
+
+    if (typeof req.user === 'undefined') {
+        return res.redirect('/login');
+    }
+
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    try {
+        if (newPassword !== confirmPassword) {
+            throw new Error("New Password and Confirm Password don't match");
+        }
+
+        const user = await User.findOne({ username: req.user.username });
+        console.log("user = ", user);
+
+        // await user.setPassword(req.body.password);
+        // const updatedUser = await user.save();
+        // req.login(updatedUser);
+        await user.changePassword(oldPassword, newPassword);
+        
+        req.flash('success', 'Password Changed Successfully');
+        res.redirect('/campgrounds')
+
+        console.log(oldPassword, " ", newPassword, " ", confirmPassword);
+    } catch (err) {
+        req.flash("error", err.message);
+        return res.redirect("/changePassword");
+    }
+
+}
+
+// if (typeof req.user === 'undefined') {
+//     res.redirect('/login')
+// } else {
+//     User.findOne({ _id: req.user._id }, function (err, user) {
+//         if (!err) {
+//             user.changePassword(req.body.oldPassword, req.body.newPassword, function (err) {
+//                 if (!err) {
+//                     res.redirect('/login')
+//                 } else {
+//                     console.log(err);
+//                 }
+//             })
+//         } else {
+//             console.log(err);
+//         }
+//     })
+// }

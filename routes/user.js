@@ -36,5 +36,14 @@ router.route("/login")
 // logout
 router.get("/logout", users.logout); 
 
+// change password
+router.route("/changePassword")
+    // route to serve the change password form
+    .get(users.renderChangePassword)
+    // route for POST request
+    // changePassword() is provided by password-local-mongoose
+    .post(isValidUser, users.changePassword);
+    
+
 
 module.exports = router;
